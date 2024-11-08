@@ -49,3 +49,4 @@ This feature details with booking, rescheduling, cancelling and getting appointm
 - Spring 3
 - Java 17
 - Mysql 8 Server Running
+- Swagger UI 3 is added to the project (http://localhost:8080/swagger-ui/index.html#)
