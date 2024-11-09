@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AvailabilityUtility {
 
-    private static final int WINDOW_24_HOUR = 2400;
     private static final int AVAILABILITY_MATRIX_LENGTH = 288;
 
     private enum ProcessType {
@@ -77,22 +76,31 @@ public class AvailabilityUtility {
             UserDetails participant, List<UserCustomAvailability> customAvailabilities) {
 
         // Getting list of timings for the week
-        List<String> weeksAvailability = participant.getDefaultAvailability().getWeeksAvailability();
+        List<String> weeksAvailability = new ArrayList<>();
+        if (participant.getDefaultAvailability() != null) {
+            weeksAvailability = participant.getDefaultAvailability().getWeeksAvailability();
+        }
         Map<Date, UserCustomAvailability> customAvailabilityMap = customAvailabilities.stream()
                 .collect(Collectors.toMap(UserCustomAvailability::getAvailabilityDate, availability -> availability));
         DayOfWeek dayOfWeek = getDayOfWeekFor(fromDate);
         // Rotating the list to matching the current day of the week order
-        Collections.rotate(weeksAvailability, - dayOfWeek.getValue());
+        if (!weeksAvailability.isEmpty()) {
+            Collections.rotate(weeksAvailability, - dayOfWeek.getValue());
+        }
         List<AvailabilityBucket> availabilityBuckets = new ArrayList<>();
         for (int day = 0; day < windowType.getDays(); day++) {
             Date currentDate = DateUtils.addDays(fromDate, day);
-            // Getting availability based on day of week
-            String availabilityString = weeksAvailability.get(day % 7);
+            String availabilityString;
             // If custom availability is present, ignoring default one
             if (customAvailabilityMap.containsKey(currentDate)) {
                 // Adding empty availability if user is not available
                 availabilityString = customAvailabilityMap.get(currentDate).isAvailable()
                         ? customAvailabilityMap.get(currentDate).getAvailability() : "";
+            } else if (!weeksAvailability.isEmpty()) {
+                // Getting availability based on day of week
+                availabilityString = weeksAvailability.get(day % 7);
+            } else {
+                continue;
             }
             // Creating the availability list
             availabilityBuckets.addAll(getAvailabilityBucketsFor(currentDate, availabilityString));
