@@ -50,3 +50,64 @@ This feature details with booking, rescheduling, cancelling and getting appointm
 - Java 17
 - Mysql 8 Server Running
 - Swagger UI 3 is added to the project (http://localhost:8080/swagger-ui/index.html#)
+
+## Post Requests Body
+
+### Users Request
+
+```
+{
+  "name": "user11",
+  "email": "user11@gmail.com"
+}
+```
+
+### Availability Default Request
+
+Adding default priority for the users weekly calendar as 10 am to 11 am & 1 pm to 6 pm
+
+```
+{
+  "timeZone": "IST",
+  "monday": "1000:1100;1300:1800",
+  "tuesday": "1000:1100;1300:1800",
+  "wednesday": "1000:1100;1300:1800",
+  "thursday": "1000:1100;1300:1800",
+  "friday": "1000:1100;1300:1800",
+  "saturday": "1000:1100;1300:1800",
+  "sunday": "1000:1100;1300:1800"
+}
+```
+
+### Custom Request
+
+```
+{
+  "date": "2024-12-11",
+  "timeZone": "IST",
+  "availability": "1000:1100;1300:1800",
+  "available": true
+}
+```
+
+### Event Request
+
+```
+{
+  "title": "Testing",
+  "description": "Testing appointment booking",
+  "eventDate": "2024-11-11",
+  "startTime": "1000",
+  "endTime": "1100",
+  "timeZone": "IST",
+  "audienceReq": [
+    {
+      "email": "user1@gmail.com",
+      "role": "ORGANISER"
+    },{
+      "email": "user2@gmail.com",
+      "role": "PARTICIPANT"
+    }
+  ]
+}
+```
